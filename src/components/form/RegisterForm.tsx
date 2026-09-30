@@ -1,10 +1,6 @@
 "use client"
 
-
-import React from 'react';
 import { useForm } from '@tanstack/react-form';
-// import { RegisterFormValues, registerSchema } from '@/validation';
-import { Separator } from '../ui/separator';
 import GoogleLoginComponent from '../modules/google.login/googole.login';
 import { FieldGroup, FieldSeparator } from '../ui/field';
 import { useRegistration } from '@/hooks';

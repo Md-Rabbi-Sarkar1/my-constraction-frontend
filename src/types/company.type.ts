@@ -1,0 +1,1 @@
+export type CompanyRole = "ADMIN"| "PROJECT_MANAGER"| "ENGINEER"| "WORKER"

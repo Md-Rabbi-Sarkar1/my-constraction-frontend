@@ -24,8 +24,8 @@ export default function LoginForm() {
 
     const form = useForm({
         defaultValues: {
-            email: "mdrabbisarkar70@gmail.com",
-            password: "SecurePassword123!"
+            email: "admin@demo.local",
+            password: "Password123!"
         },
         validators: {
             onSubmit: loginSchema
@@ -41,12 +41,12 @@ export default function LoginForm() {
                         title: "Login Success",
                         description: "Welcome",
                     })
-                    router.push('/')
+                    router.push('/dashboard')
                 },
                 onError: (err) => {
                     toast.add({
-                        title: "Login Fail",
-                        description: err.message || "Something wrong , Plz try again"
+                        title: "Login Fail ",
+                        description: (err as any).data.message || "Something wrong , Plz try again"
                     })
                 }
             })
