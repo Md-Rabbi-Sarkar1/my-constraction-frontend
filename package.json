@@ -14,6 +14,7 @@
     "@react-oauth/google": "^0.13.5",
     "@tanstack/react-form": "^1.33.5",
     "@tanstack/react-query": "^5.102.8",
+    "@tanstack/zod-form-adapter": "^0.42.1",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.2.6",
     "input-otp": "^1.5.0",

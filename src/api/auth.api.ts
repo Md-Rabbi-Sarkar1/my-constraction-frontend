@@ -1,4 +1,4 @@
-import apiClient from "@/lib/api-client";
+import apiClient from "@/lib/ofetch-api-client";
 import { LoginPayload, VerifyAccountPayload } from "@/types/auth.type";
 import { registerPayloadSchema, TRegisterPayload } from "@/validation";
 

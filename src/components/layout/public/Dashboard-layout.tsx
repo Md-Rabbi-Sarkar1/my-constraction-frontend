@@ -12,6 +12,7 @@ import { useGetMe, useLogout } from "@/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { RoleBadge } from "@/components/ui/badge";
 
+
 interface NavItem {
   href: string;
   label: string;
@@ -20,17 +21,17 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: "◆" },
-  { href: "/projects", label: "Projects", icon: "▤", permission: "createProject" },
-  { href: "/tasks", label: "Tasks", icon: "✓" },
-  { href: "/reports", label: "Daily Reports", icon: "✎" },
-  { href: "/materials", label: "Materials", icon: "⚖", permission: "manageMaterial" },
-  { href: "/expenses", label: "Expenses", icon: "\$" },
-  { href: "/issues", label: "Issues", icon: "!" },
-  { href: "/documents", label: "Documents", icon: "▦" },
-  { href: "/notifications", label: "Notifications", icon: "◔" },
-  { href: "/settings/company", label: "Company", icon: "⚙", permission: "manageCompany" },
-  { href: "/settings/users", label: "Users", icon: "☺", permission: "manageUsers" },
+  { href: "/user-dashboard/dashboard", label: "Dashboard", icon: "◆" },
+  { href: "/user-dashboard/projects", label: "Projects", icon: "▤", permission: "createProject" },
+  { href: "/user-dashboard/tasks", label: "Tasks", icon: "✓" },
+  { href: "/user-dashboard/reports", label: "Daily Reports", icon: "✎" },
+  { href: "/user-dashboard/materials", label: "Materials", icon: "⚖", permission: "manageMaterial" },
+  { href: "/user-dashboard/expenses", label: "Expenses", icon: "\$" },
+  { href: "/user-dashboard/issues", label: "Issues", icon: "!" },
+  { href: "/user-dashboard/documents", label: "Documents", icon: "▦" },
+  { href: "/user-dashboard/notifications", label: "Notifications", icon: "◔" },
+  { href: "/user-dashboard/settings/company", label: "Company", icon: "⚙", permission: "manageCompany" },
+  { href: "/user-dashboard/settings/users", label: "Users", icon: "☺", permission: "manageUsers" },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {

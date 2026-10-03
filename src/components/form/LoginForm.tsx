@@ -41,7 +41,7 @@ export default function LoginForm() {
                         title: "Login Success",
                         description: "Welcome",
                     })
-                    router.push('/dashboard')
+                    router.push('/user-dashboard/dashboard')
                 },
                 onError: (err) => {
                     toast.add({
