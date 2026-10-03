@@ -58,3 +58,57 @@ export function verifyUserInvite(data: AcceptInviteFormValues) {
     body: JSON.stringify(data),
   });
 }
+
+
+
+export interface UserItem {
+  id: string;
+  companyId: string;
+  name: string | null;
+  email: string;
+  role: "ADMIN" | "PROJECT_MANAGER" | "ENGINEER" | "WORKER";
+  emailVerified: boolean;
+  createdAt: string;
+}
+
+export interface GetAllUsersResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    result: UserItem[];
+  };
+}
+
+export function getAllUsers() {
+  return apiClient<GetAllUsersResponse>("/user/allusers", {
+    method: "GET",
+  });
+}
+
+export interface ProjectMemberResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    result: {
+      id: string;
+      projectId: string;
+      userId: string;
+      user: {
+        id: string;
+        name: string | null;
+        email: string;
+        role: string;
+      };
+    };
+  };
+}
+
+// 💡 Matches router.post("/:id/members")
+export function addProjectMember(projectId: string, userId: string) {
+  return apiClient<ProjectMemberResponse>(`/projects/${projectId}/members`, {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+  });
+}

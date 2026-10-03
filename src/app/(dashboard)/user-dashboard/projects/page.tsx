@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link"; // 👈 1. Import Next.js Link component
 import { CreateProjectForm } from "@/components/form/CreateProjectForm";
 import { Modal } from "@/components/ui/modal"; 
 import { Button } from "@/components/ui/button";
-import { useGetProjects } from "@/hooks"; // 
-
+import { useGetProjects } from "@/hooks"; 
 
 interface ProjectItem {
   id: string;
@@ -21,52 +21,45 @@ interface ProjectItem {
 export default function ProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  
   const { data, isLoading, isError, refetch } = useGetProjects();
-  console.log(data)
+
   
-const projects: ProjectItem[] = Array.isArray(data?.data?.result) 
-  ? data.data.result 
-  : data?.result || [];
+  const projects: ProjectItem[] = Array.isArray(data?.data?.result) 
+    ? data.data.result 
+    : data?.result || [];
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       
-     
       <div className="flex items-center justify-between border-b pb-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-950">Projects</h1>
           <p className="text-sm text-muted-foreground">Manage corporate projects, tracking timelines and budgets.</p>
         </div>
         
-        
         <Button onClick={() => setIsModalOpen(true)}>
           Create Project
         </Button>
       </div>
 
-      
       {isLoading && (
         <div className="rounded-md border p-12 text-center text-sm text-muted-foreground animate-pulse">
           Loading projects data...
         </div>
       )}
 
-      
       {isError && (
         <div className="rounded-md border border-red-200 p-8 text-center text-sm text-red-600 bg-red-50">
           Failed to load projects. Please try refreshing the page.
         </div>
       )}
 
-     
       {!isLoading && !isError && projects.length === 0 && (
         <div className="rounded-md border border-dashed p-16 text-center text-sm text-muted-foreground">
           No projects found. Click "Create Project" to get started.
         </div>
       )}
 
-      
       {!isLoading && !isError && projects.length > 0 && (
         <div className="rounded-lg border bg-white overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
@@ -78,14 +71,16 @@ const projects: ProjectItem[] = Array.isArray(data?.data?.result)
                   <th className="px-6 py-3 font-medium">Client Info</th>
                   <th className="px-6 py-3 font-medium">Budget</th>
                   <th className="px-6 py-3 font-medium">Timeline</th>
+                  {/* 2. Add an explicit Actions header */}
+                  <th className="px-6 py-3 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {projects.map((project) => (
                   <tr key={project.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-slate-900">
-                      <div>{project.name}</div>
-                      <div className="text-xs text-muted-foreground font-normal max-w-xs truncate">
+                      <div className="font-semibold text-slate-950">{project.name}</div>
+                      <div className="text-xs text-muted-foreground font-normal max-w-xs truncate mt-0.5">
                         {project.description}
                       </div>
                     </td>
@@ -99,6 +94,18 @@ const projects: ProjectItem[] = Array.isArray(data?.data?.result)
                       {" to "}
                       {project.expectedEndDate ? new Date(project.expectedEndDate).toLocaleDateString() : "—"}
                     </td>
+                    {/* 3. Render a functional "Details" button that redirects via a Link context wrapper */}
+                    <td className="px-6 py-4 text-right">
+                      <Link href={`/user-dashboard/projects/${project.id}`} passHref>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-8 text-xs font-medium border-slate-200 text-slate-700 hover:bg-slate-50"
+                        >
+                          Details
+                        </Button>
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -106,8 +113,8 @@ const projects: ProjectItem[] = Array.isArray(data?.data?.result)
           </div>
         </div>
       )}
-
     
+      {/* Create Project Modal Container */}
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -118,14 +125,12 @@ const projects: ProjectItem[] = Array.isArray(data?.data?.result)
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>
               Cancel
             </Button>
-            
             <Button type="submit" form="create-project-form">
               Create Project
             </Button>
           </>
         }
       >
-        
         <CreateProjectForm 
           onSuccess={() => {
             setIsModalOpen(false);

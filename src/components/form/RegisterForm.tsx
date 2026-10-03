@@ -33,7 +33,7 @@ const router = useRouter();
         },
 
         onSubmit: async ({ value }) => {
-            console.log(value)
+            
             // Do something with form values
             const registrationData :TRegisterPayload = {
                 companyName: value.companyName,
