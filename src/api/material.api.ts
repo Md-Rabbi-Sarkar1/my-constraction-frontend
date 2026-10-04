@@ -40,3 +40,43 @@ export function getAllCompanyMaterials() {
     method: "GET",
   });
 }
+
+
+
+export type TransactionType = "PURCHASE" | "USAGE" | "ADJUSTMENT";
+
+export interface CreateTransactionPayload {
+  type: TransactionType;
+  quantity: number;
+  projectId?: string;
+  note?: string;
+}
+
+export interface TransactionItem extends CreateTransactionPayload {
+  id: string;
+  materialId: string;
+  createdAt: string;
+  project?: {
+    id: string;
+    name: string;
+  } | null;
+}
+
+export interface MaterialDetailsData extends MaterialItem {
+  transactions: TransactionItem[];
+}
+
+// 💡 Maps strictly to GET /api/materials/:id
+export function getMaterialById(materialId: string) {
+  return apiClient<MaterialApiResponse<MaterialDetailsData>>(`/materials/${materialId}`, {
+    method: "GET",
+  });
+}
+
+// 💡 Maps strictly to POST /api/materials/:id/transactions
+export function recordMaterialTransaction(materialId: string, payload: CreateTransactionPayload) {
+  return apiClient<MaterialApiResponse<TransactionItem>>(`/materials/${materialId}/transactions`, {
+    method: "POST",
+    body: payload,
+  });
+}
