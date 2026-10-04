@@ -7,7 +7,8 @@ import Link from 'next/link'
 import React from 'react'
 const routes = [
     { name: "Home", url: "/" },
-    { name: "About Us", url: "/about-us" }
+    { name: "About Us", url: "/about-us" },
+    {name:"Dashboard", url: "/user-dashboard/dashboard"}
 ]
 export default function Header() {
     const {data, isLoading} = useGetMe()
