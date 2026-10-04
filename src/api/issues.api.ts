@@ -56,4 +56,25 @@ export function getIssueById(issueId: string) {
   });
 }
 
+export interface GlobalIssueItem extends IssueItem {
+  project?: {
+    id: string;
+    name: string;
+  } | null;
+}
 
+export interface GlobalIssueResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    result: GlobalIssueItem[]; // 💡 Unpacks your verified backend data model result array
+  };
+}
+
+// 💡 Maps strictly to GET /api/issues
+export function getAllCompanyIssues() {
+  return apiClient<GlobalIssueResponse>("/issues", {
+    method: "GET",
+  });
+}

@@ -1,4 +1,4 @@
-import { CreateIssuePayload, createProjectIssue, getIssueById, getProjectIssues } from "@/api/issues.api";
+import { CreateIssuePayload, createProjectIssue, getAllCompanyIssues, getIssueById, getProjectIssues } from "@/api/issues.api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 
@@ -36,5 +36,16 @@ export function useGetIssueById(issueId: string) {
       return response?.data?.result || response?.result || response;
     },
     enabled: !!issueId, // Only execution fire if issueId is not undefined
+  });
+}
+
+export function useGetGlobalCompanyIssues() {
+  return useQuery({
+    queryKey: ["global-company-issues-directory"],
+    queryFn: getAllCompanyIssues,
+    // 💡 Unpacks response.data.result matching your Postman payload architecture wrappers
+    select: (response: any) => {
+      return response?.data?.result || response?.result || response || [];
+    },
   });
 }
