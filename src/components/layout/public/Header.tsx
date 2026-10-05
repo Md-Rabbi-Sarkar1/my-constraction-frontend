@@ -7,7 +7,10 @@ import Link from 'next/link'
 import React from 'react'
 const routes = [
     { name: "Home", url: "/" },
+    { name: "Services", url: "/services" },
     { name: "About Us", url: "/about-us" },
+    { name: "Contact", url: "/contact" },
+    { name: "Pricing", url: "/pricing" },
     {name:"Dashboard", url: "/user-dashboard/dashboard"}
 ]
 export default function Header() {
