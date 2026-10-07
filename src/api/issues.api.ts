@@ -78,3 +78,23 @@ export function getAllCompanyIssues() {
     method: "GET",
   });
 }
+
+
+export interface UpdateIssueStatusPayload {
+  status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+}
+
+// 💡 Maps strictly to PATCH /api/issues/:id
+export function updateIssueStatus(issueId: string, payload: UpdateIssueStatusPayload) {
+  return apiClient<any>(`/issues/${issueId}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+// 💡 Maps strictly to DELETE /api/issues/:id
+export function deleteIssueRecord(issueId: string) {
+  return apiClient<any>(`/issues/${issueId}`, {
+    method: "DELETE",
+  });
+}

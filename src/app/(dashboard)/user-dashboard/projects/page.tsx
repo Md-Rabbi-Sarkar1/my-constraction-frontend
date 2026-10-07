@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link"; // 👈 1. Import Next.js Link component
-import { CreateProjectForm } from "@/components/form/CreateProjectForm";
+import Link from "next/link"; 
+import { ProjectForm } from "@/components/form/ProjectForm"; // 👈 Points to the shared form
 import { Modal } from "@/components/ui/modal"; 
 import { Button } from "@/components/ui/button";
-import { useGetProjects } from "@/hooks"; 
+import { Pencil, Trash2, RefreshCw } from "lucide-react"; 
+import { useGetProjects, useDeleteProject } from "@/hooks"; 
 
 interface ProjectItem {
   id: string;
@@ -16,20 +17,34 @@ interface ProjectItem {
   budget?: string;
   startDate?: string;
   expectedEndDate?: string;
+  managerId?: string;
 }
 
 export default function ProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Track selected project: If null -> we are creating. If populated -> we are updating!
+  const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
   
   const { data, isLoading, isError, refetch } = useGetProjects();
+  const deleteProjectMutation = useDeleteProject();
 
-  
   const projects: ProjectItem[] = Array.isArray(data?.data?.result) 
     ? data.data.result 
     : data?.result || [];
 
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you absolutely sure you want to delete this project?")) {
+      try {
+        await deleteProjectMutation.mutateAsync(id);
+        void refetch();
+      } catch (err) {
+        console.error("Deletion failure capture:", err);
+      }
+    }
+  };
+
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
       
       <div className="flex items-center justify-between border-b pb-4">
         <div>
@@ -37,7 +52,8 @@ export default function ProjectsPage() {
           <p className="text-sm text-muted-foreground">Manage corporate projects, tracking timelines and budgets.</p>
         </div>
         
-        <Button onClick={() => setIsModalOpen(true)}>
+        {/* Trigger creation by passing null to the active state */}
+        <Button onClick={() => { setActiveProject(null); setIsModalOpen(true); }}>
           Create Project
         </Button>
       </div>
@@ -71,7 +87,6 @@ export default function ProjectsPage() {
                   <th className="px-6 py-3 font-medium">Client Info</th>
                   <th className="px-6 py-3 font-medium">Budget</th>
                   <th className="px-6 py-3 font-medium">Timeline</th>
-                  {/* 2. Add an explicit Actions header */}
                   <th className="px-6 py-3 font-medium text-right">Actions</th>
                 </tr>
               </thead>
@@ -94,17 +109,38 @@ export default function ProjectsPage() {
                       {" to "}
                       {project.expectedEndDate ? new Date(project.expectedEndDate).toLocaleDateString() : "—"}
                     </td>
-                    {/* 3. Render a functional "Details" button that redirects via a Link context wrapper */}
+                    
+                    {/* Render functional Update and Delete controls */}
                     <td className="px-6 py-4 text-right">
-                      <Link href={`/user-dashboard/projects/${project.id}`} passHref>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="h-8 text-xs font-medium border-slate-200 text-slate-700 hover:bg-slate-50"
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link href={`/user-dashboard/projects/${project.id}`} passHref>
+                          <Button variant="outline" size="sm" className="h-8 text-xs">
+                            Details
+                          </Button>
+                        </Link>
+                        
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 text-blue-600 hover:bg-blue-50"
+                          onClick={() => {
+                            setActiveProject(project); // 👈 Loads project data into local state
+                            setIsModalOpen(true);      // 👈 Opens the unified modal
+                          }}
                         >
-                          Details
+                          <Pencil className="h-3.5 w-3.5" />
                         </Button>
-                      </Link>
+
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:bg-destructive/5"
+                          disabled={deleteProjectMutation.isPending}
+                          onClick={() => handleDelete(project.id)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -114,24 +150,26 @@ export default function ProjectsPage() {
         </div>
       )}
     
-      {/* Create Project Modal Container */}
+      {/* SHARED MODAL CONTAINER */}
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Create New Project"
-        description="Fill out the project technical details and assign a manager below."
+        title={activeProject ? "Update Project Parameters" : "Create New Project"}
+        description={activeProject ? "Alter real-time target details below." : "Fill out details to initialize new project."}
         footer={
           <>
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" form="create-project-form">
-              Create Project
+            {/* Direct forms action button reference configuration */}
+            <Button type="submit" form="project-form">
+              {activeProject ? "Save Changes" : "Create Project"}
             </Button>
           </>
         }
       >
-        <CreateProjectForm 
+        <ProjectForm 
+          projectData={activeProject} // 👈 Passes down the item value mapping array properties
           onSuccess={() => {
             setIsModalOpen(false);
             void refetch();

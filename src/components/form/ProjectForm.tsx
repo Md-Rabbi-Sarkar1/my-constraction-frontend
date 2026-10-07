@@ -1,56 +1,89 @@
-"use client"
+"use client";
+
 import React from "react";
 import { useForm } from "@tanstack/react-form";
-
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { CreateProjectInput, createProjectSchema } from "@/validation/project.validation";
-import { useCreateProject } from "@/hooks";
+import { useCreateProject, useUpdateProject } from "@/hooks"; // 👈 Added useUpdateProject here
 import { useManagers } from "@/hooks/user.hook";
 import { toast } from "../ui/toast";
 
-export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
-  const { mutate: createProject, isPending: isSubmitting } = useCreateProject();
+// Define strict prop shapes to allow both create and update states
+interface ProjectFormProps {
+  projectData?: {
+    id: string;
+    name: string;
+    description: string;
+    location: string;
+    clientInfo?: string;
+    startDate?: string;
+    expectedEndDate?: string;
+    budget?: string | number;
+    managerId?: string;
+  } | null;
+  onSuccess?: () => void;
+}
+
+export function ProjectForm({ projectData, onSuccess }: ProjectFormProps) {
+  const isEditMode = !!projectData; // true if we are updating, false if creating
+  
+  const { mutate: createProject } = useCreateProject();
+  const { mutate: updateProject } = useUpdateProject(); // 👈 Mutation handler hook
   const { data: managers, isLoading: isLoadingManagers } = useManagers();
 
+  // Clean date helper to format raw database ISO strings down to HTML date format (YYYY-MM-DD)
+  const formatDateForInput = (dateStr?: string) => {
+    if (!dateStr) return "";
+    return dateStr.split("T")[0];
+  };
+
   const form = useForm({
+    // Pre-populate with item properties if in update/edit mode, else fall back to empty fields
     defaultValues: {
-      name: "",
-      description: "",
-      location: "",
-      clientInfo: "",
-      startDate: "",
-      expectedEndDate: "",
-      budget: "",
-      managerId: "",
+      name: projectData?.name || "",
+      description: projectData?.description || "",
+      location: projectData?.location || "",
+      clientInfo: projectData?.clientInfo || "",
+      startDate: formatDateForInput(projectData?.startDate),
+      expectedEndDate: formatDateForInput(projectData?.expectedEndDate),
+      budget: projectData?.budget ? String(projectData.budget) : "",
+      managerId: projectData?.managerId || "",
     } as any,
-    validators: {
-      onSubmit: createProjectSchema,
-    },
     onSubmit: async ({ value }) => {
-      createProject(value, {
-        onSuccess: () => {
-          toast.add({title:"Project created successfully!"});
-          form.reset();
-          if (onSuccess) onSuccess();
-        },
-      });
+      if (isEditMode && projectData) {
+        // Trigger update path sequence
+        updateProject(
+          { id: projectData.id, payload: value },
+          {
+            onSuccess: () => {
+              toast.add({ title: "Project updated successfully!" });
+              if (onSuccess) onSuccess();
+            },
+          }
+        );
+      } else {
+        // Trigger traditional create path sequence
+        createProject(value, {
+          onSuccess: () => {
+            toast.add({ title: "Project created successfully!" });
+            form.reset();
+            if (onSuccess) onSuccess();
+          },
+        });
+      }
     },
   });
 
   return (
     <form
-      id="create-project-form"
+      id="project-form" // 👈 Changed target form id to match the shared wrapper button control
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
         form.handleSubmit();
       }}
-     
       className="space-y-4 w-full max-h-[65vh] overflow-y-auto px-1 grid grid-cols-1 gap-y-4 gap-x-3 sm:grid-cols-2"
     >
-     
       <form.Field name="name">
         {(field) => (
           <div className="sm:col-span-2">
@@ -60,14 +93,10 @@ export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Enter project name"
             />
-            {field.state.meta.errors && (
-              <p className="text-red-500 text-xs mt-1">{field.state.meta.errors.join(", ")}</p>
-            )}
           </div>
         )}
       </form.Field>
 
-      
       <form.Field name="description">
         {(field) => (
           <div className="sm:col-span-2">
@@ -77,14 +106,10 @@ export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Short details about the project"
             />
-            {field.state.meta.errors && (
-              <p className="text-red-500 text-xs mt-1">{field.state.meta.errors.join(", ")}</p>
-            )}
           </div>
         )}
       </form.Field>
 
-      
       <form.Field name="location">
         {(field) => (
           <div>
@@ -94,14 +119,10 @@ export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Project site/location"
             />
-            {field.state.meta.errors && (
-              <p className="text-red-500 text-xs mt-1">{field.state.meta.errors.join(", ")}</p>
-            )}
           </div>
         )}
       </form.Field>
 
-     
       <form.Field name="clientInfo">
         {(field) => (
           <div>
@@ -111,14 +132,10 @@ export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Client name or company"
             />
-            {field.state.meta.errors && (
-              <p className="text-red-500 text-xs mt-1">{field.state.meta.errors.join(", ")}</p>
-            )}
           </div>
         )}
       </form.Field>
 
-      {/* Start Date */}
       <form.Field name="startDate">
         {(field) => (
           <div>
@@ -128,14 +145,10 @@ export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
-            {field.state.meta.errors && (
-              <p className="text-red-500 text-xs mt-1">{field.state.meta.errors.join(", ")}</p>
-            )}
           </div>
         )}
       </form.Field>
 
-     
       <form.Field name="expectedEndDate">
         {(field) => (
           <div>
@@ -145,14 +158,10 @@ export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
-            {field.state.meta.errors && (
-              <p className="text-red-500 text-xs mt-1">{field.state.meta.errors.join(", ")}</p>
-            )}
           </div>
         )}
       </form.Field>
 
-     
       <form.Field name="budget">
         {(field) => (
           <div>
@@ -163,17 +172,13 @@ export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="e.g. 50000"
             />
-            {field.state.meta.errors && (
-              <p className="text-red-500 text-xs mt-1">{field.state.meta.errors.join(", ")}</p>
-            )}
           </div>
         )}
       </form.Field>
 
-      
       <form.Field name="managerId">
         {(field) => {
-          const selectedManager = managers?.find((m) => m.id === field.state.value);
+          const selectedManager = managers?.find((m: any) => m.id === field.state.value);
           return (
             <div>
               <label className="text-sm font-medium text-slate-700">Project Manager</label>
@@ -188,16 +193,13 @@ export function CreateProjectForm({ onSuccess }: { onSuccess?: () => void }) {
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {managers?.map((manager) => (
+                  {managers?.map((manager: any) => (
                     <SelectItem key={manager.id} value={manager.id}>
                       {manager.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {field.state.meta.errors && (
-                <p className="text-red-500 text-xs mt-1">{field.state.meta.errors.join(", ")}</p>
-              )}
             </div>
           );
         }}

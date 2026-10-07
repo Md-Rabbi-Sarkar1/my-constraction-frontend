@@ -1,4 +1,4 @@
-import { createProjectTask, CreateTaskPayload, getAllTasks, getProjectTasks, getTaskById, GlobalTaskFiltersPayload } from "@/api/task.api";
+import { createProjectTask, CreateTaskPayload, deleteTaskRecord, getAllTasks, getProjectTasks, getTaskById, GlobalTaskFiltersPayload, updateTaskStatus, UpdateTaskStatusPayload } from "@/api/task.api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 
@@ -82,3 +82,57 @@ export function useGetGlobalTasks(filters: GlobalTaskFiltersPayload) {
 
 
 
+export function useUpdateTaskStatus(taskId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateTaskStatusPayload) => updateTaskStatus(taskId, payload),
+    onSuccess: (_, payload) => {
+      // 1. FIXED: Instantly update the single task detail cache matching the exact response layout
+      queryClient.setQueryData(["project-task-detail", taskId], (old: any) => {
+        if (!old) return old;
+
+        // Traverse down the exact structure used in your useGetTaskById select wrapper
+        if (old.data?.result) {
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              result: { ...old.data.result, status: payload.status }
+            }
+          };
+        } else if (old.result) {
+          return {
+            ...old,
+            result: { ...old.result, status: payload.status }
+          };
+        }
+
+        // Fallback fallback if the cache data layer is already flat
+        return {
+          ...old,
+          status: payload.status,
+        };
+      });
+
+      // 2. FIXED: Invalidate the correct matching key and trigger silent background syncs for lists
+      queryClient.invalidateQueries({ queryKey: ["project-task-detail", taskId] });
+      queryClient.invalidateQueries({ queryKey: ["project-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["company-tasks-inventory"] });
+    },
+  });
+}
+
+
+export function useDeleteTaskRecord(taskId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteTaskRecord(taskId),
+    onSuccess: () => {
+      // Clear data keys from layout memory state securely
+      queryClient.invalidateQueries({ queryKey: ["project-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["company-tasks-inventory"] });
+    },
+  });
+}

@@ -1,4 +1,4 @@
-import { CreateIssuePayload, createProjectIssue, getAllCompanyIssues, getIssueById, getProjectIssues } from "@/api/issues.api";
+import { CreateIssuePayload, createProjectIssue, deleteIssueRecord, getAllCompanyIssues, getIssueById, getProjectIssues, updateIssueStatus, UpdateIssueStatusPayload } from "@/api/issues.api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 
@@ -46,6 +46,62 @@ export function useGetGlobalCompanyIssues() {
     // 💡 Unpacks response.data.result matching your Postman payload architecture wrappers
     select: (response: any) => {
       return response?.data?.result || response?.result || response || [];
+    },
+  });
+}
+
+
+
+export function useUpdateIssueStatus(issueId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateIssueStatusPayload) => updateIssueStatus(issueId, payload),
+    onSuccess: (_, payload) => {
+      // 1. FIXED: Update matching your structural API payload layers
+      queryClient.setQueryData(["project-issue-detail", issueId], (old: any) => {
+        if (!old) return old;
+
+        // Safely map across the exact data architecture pattern found in your cache
+        if (old.data?.result) {
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              result: { ...old.data.result, status: payload.status }
+            }
+          };
+        } else if (old.result) {
+          return {
+            ...old,
+            result: { ...old.result, status: payload.status }
+          };
+        }
+
+        // Fallback if data is already flattened in the cache
+        return {
+          ...old,
+          status: payload.status,
+        };
+      });
+
+      // 2. Silently refresh everything else in the background
+      queryClient.invalidateQueries({ queryKey: ["project-issues"] });
+      queryClient.invalidateQueries({ queryKey: ["global-company-issues-directory"] });
+    },
+  });
+}
+
+
+
+export function useDeleteIssueRecord(issueId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteIssueRecord(issueId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project-issues"] });
+      queryClient.invalidateQueries({ queryKey: ["global-company-issues-directory"] });
     },
   });
 }

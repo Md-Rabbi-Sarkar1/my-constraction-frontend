@@ -85,3 +85,23 @@ export function getProjectMembers(projectId: string) {
     method: "GET",
   });
 }
+
+
+
+
+
+
+// Client function to update a project using your configured ofetch instance
+export function updateProject({ id, payload }: { id: string; payload: any }) {
+  return apiClient(`/projects/${id}`, { 
+    method: "PUT", 
+    body: payload 
+  });
+}
+
+// Client function to delete a project using your configured ofetch instance
+export function deleteProject(id: string) {
+  return apiClient(`/projects/${id}`, { 
+    method: "DELETE" 
+  });
+}

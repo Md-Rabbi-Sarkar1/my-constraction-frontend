@@ -132,7 +132,7 @@ export default function GlobalTasksPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.push(`/projects/${task.projectId || "active"}/tasks/${task.id}`)}
+                        onClick={() => router.push(`/user-dashboard/tasks/${task.id}`)}
                         className="h-8 text-xs font-medium border-slate-200 text-slate-700 hover:bg-slate-50"
                       >
                         Details

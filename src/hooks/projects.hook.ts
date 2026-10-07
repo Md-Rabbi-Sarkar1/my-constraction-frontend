@@ -1,6 +1,6 @@
-import { createProject, fetchProjects, getProjectMembers, getSingleProject } from "@/api/projects.api";
+import { createProject, deleteProject, fetchProjects, getProjectMembers, getSingleProject, updateProject } from "@/api/projects.api";
 import { IcreateProjectSchema } from "@/types/project.type";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useCreateProject() {
   return useMutation({
@@ -37,5 +37,32 @@ export function useGetProjectMembers(projectId: string) {
     // Unpacks your verified API data array layer safely
     select: (response) => response?.data?.result || [],
     enabled: !!projectId,
+  });
+}
+
+
+// Hook to trigger an update mutation transaction
+export function useUpdateProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateProject,
+    onSuccess: () => {
+      // Invalidate the cache to instantly refresh data lists across your pages
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+  });
+}
+
+// Hook to trigger a deletion mutation transaction
+export function useDeleteProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteProject,
+    onSuccess: () => {
+      // Refresh the core projects array to erase the deleted record instantly
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
   });
 }

@@ -4,10 +4,17 @@ import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AddMemberModal } from "@/components/form/AddMemberModal";
 import { Button } from "@/components/ui/button";
-import { useGetProjectDashboard, useGetProjectMembers } from "@/hooks";
-import { ProjectMember } from "@/api";
 
-// 1. Column Definitions for Kanban Boards
+// 💡 Imports your exact project workspace hooks in parallel
+import { 
+  useGetProjectDashboard, 
+  useGetProjectMembers,
+  // 👈 Loaded from your hooks file
+} from "@/hooks";
+import { ProjectMember } from "@/api";
+import { useGetProjectTasks } from "@/hooks/task.hook";
+import { useGetProjectIssues } from "@/hooks/issues.hook";
+
 type TaskStatus = "TODO" | "IN_PROGRESS" | "REVIEW" | "DONE";
 const STATUS_COLUMNS: TaskStatus[] = ["TODO", "IN_PROGRESS", "REVIEW", "DONE"];
 
@@ -23,25 +30,29 @@ export default function ProjectDetailsPage({ params }: PageProps) {
   const projectId = unwrappedParams.projectId as string;
   const router = useRouter();
 
-  // State to handle Member Intake Popup Window
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
 
-  // TanStack Query Hooks fetching data from your backend servers
-  const { data: dashboard, isLoading: isDashboardLoading, isError } = useGetProjectDashboard(projectId);
+  // 1. Fetch project profile base metrics
+  const { data: rawDashboard, isLoading: isDashboardLoading, isError } = useGetProjectDashboard(projectId);
   const { data: liveProjectMembers = [], isLoading: isMembersLoading } = useGetProjectMembers(projectId);
 
-  const isLoading = isDashboardLoading || isMembersLoading;
+  // 2. 💡 DYNAMIC FETCH INJECTION: Call your standalone pipeline hooks explicitly
+  const { data: tasksList = [], isLoading: isTasksLoading } = useGetProjectTasks(projectId);
+  const { data: issuesList = [], isLoading: isIssuesLoading } = useGetProjectIssues(projectId);
 
-  // Defensive Fallbacks while files compile or queries process
-  if (isLoading) return <div className="p-12 text-center text-slate-500 font-medium animate-pulse">Loading workspace board details...</div>;
-  if (isError || !dashboard) return <div className="p-12 text-center text-red-500 font-semibold">Failed to load the project parameters overview.</div>;
+  const dashboard = (rawDashboard as any)?.data?.result || (rawDashboard as any)?.result || rawDashboard;
+
+  const isLoading = isDashboardLoading || isMembersLoading || isTasksLoading || isIssuesLoading;
+
+  if (isLoading) return <div className="p-12 text-center text-slate-500 font-medium animate-pulse">Syncing parallel workspace data pipelines...</div>;
+  if (isError || !dashboard) return <div className="p-12 text-center text-red-500 font-semibold bg-red-50 border rounded-xl max-w-xl mx-auto mt-10">Failed to load the project parameters overview.</div>;
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8 antialiased text-slate-900 min-h-screen">
-            {/* HEADER SECTION */}
+      {/* HEADER SECTION */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-5 gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-950">{dashboard.name}</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-950">{dashboard.name || "Project Dashboard"}</h1>
           <p className="text-sm text-slate-500 mt-2 max-w-3xl leading-relaxed">{dashboard.description || "No project description provided."}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -70,7 +81,7 @@ export default function ProjectDetailsPage({ params }: PageProps) {
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
           <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Allocated Budget</span>
           <span className="text-sm font-mono font-bold text-green-700 block mt-1">
-            {dashboard.budget ? `$${Number(dashboard.budget).toLocaleString()}` : "—"}
+            {dashboard.budget ? `৳${Number(dashboard.budget).toLocaleString()}` : "—"}
           </span>
         </div>
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
@@ -86,13 +97,12 @@ export default function ProjectDetailsPage({ params }: PageProps) {
         
         {/* KANBAN BOARDS SECTION */}
         <div className="lg:col-span-3 space-y-8">
-          
           {/* TASK PIPELINE KANBAN */}
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-slate-950 tracking-tight">Tasks Board Pipeline</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
               {STATUS_COLUMNS.map((col) => {
-                const columnTasks = dashboard.tasks?.filter((t: any) => t.status === col) || [];
+                const columnTasks = tasksList.filter((t: any) => t.status === col);
                 return (
                   <div key={col} className="bg-slate-100/80 p-3 rounded-xl border border-slate-200/60 min-h-[300px] flex flex-col space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-200 pb-2">
@@ -106,7 +116,7 @@ export default function ProjectDetailsPage({ params }: PageProps) {
                           <h4 className="text-xs font-bold text-slate-900 leading-snug">{task.title}</h4>
                           {task.description && <p className="text-[11px] text-slate-500 line-clamp-2">{task.description}</p>}
                           <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[10px]">
-                            <span className="bg-slate-100 px-1 py-0.5 rounded font-bold text-slate-600">{task.priority}</span>
+                            <span className="bg-slate-100 px-1 py-0.5 rounded font-bold text-slate-600">{task.priority || "MEDIUM"}</span>
                             <span className="text-slate-500 font-semibold truncate max-w-[80px]">@{task.assignedTo?.name || "Unassigned"}</span>
                           </div>
                         </div>
@@ -126,7 +136,7 @@ export default function ProjectDetailsPage({ params }: PageProps) {
             <h2 className="text-xl font-bold text-slate-950 tracking-tight">Issues Board Pipeline</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
               {ISSUE_COLUMNS.map((col) => {
-                const columnIssues = dashboard.issues?.filter((i: any) => i.status === col) || [];
+                const columnIssues = issuesList.filter((i: any) => i.status === col);
                 return (
                   <div key={col} className="bg-slate-100/80 p-3 rounded-xl border border-slate-200/60 min-h-[300px] flex flex-col space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-200 pb-2">
@@ -185,7 +195,7 @@ export default function ProjectDetailsPage({ params }: PageProps) {
 
       </div>
 
-      {/* MODAL WINDOW LAYER OVERLAY */}
+      {/* RENDER DYNAMIC ASSIGNMENT OVERLAY */}
       <AddMemberModal 
         isOpen={isMemberModalOpen}
         onClose={() => setIsMemberModalOpen(false)}

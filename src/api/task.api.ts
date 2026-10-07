@@ -119,3 +119,22 @@ export function getAllTasks(filters: GlobalTaskFiltersPayload) {
     method: "GET",
   });
 }
+
+export interface UpdateTaskStatusPayload {
+  status: "TODO" | "IN_PROGRESS" | "REVIEW" | "DONE";
+}
+
+// 💡 Maps strictly to PATCH /api/tasks/:id
+export function updateTaskStatus(taskId: string, payload: UpdateTaskStatusPayload) {
+  return apiClient<any>(`/tasks/${taskId}/status`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+// 💡 Maps strictly to DELETE /api/tasks/:id
+export function deleteTaskRecord(taskId: string) {
+  return apiClient<any>(`/tasks/${taskId}`, {
+    method: "DELETE",
+  });
+}
