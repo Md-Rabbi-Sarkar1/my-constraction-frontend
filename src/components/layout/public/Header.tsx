@@ -10,7 +10,7 @@ const routes = [
     { name: "Services", url: "/services" },
     { name: "About Us", url: "/about-us" },
     { name: "Contact", url: "/contact" },
-    { name: "Pricing", url: "/pricing" },
+  { name: "Pricing", url: "/pricing" },
     {name:"Dashboard", url: "/user-dashboard/dashboard"}
 ]
 export default function Header() {

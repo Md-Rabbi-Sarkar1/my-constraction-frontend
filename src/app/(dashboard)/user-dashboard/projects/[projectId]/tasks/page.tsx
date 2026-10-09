@@ -28,7 +28,7 @@ console.log(tasks)
           <p className="text-sm text-muted-foreground">Monitor milestones, timelines, and operator crew allocations.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push(`/projects/${projectId}`)}>
+          <Button variant="outline" onClick={() => router.push(`/user-dashboard/projects/${projectId}`)}>
             Back to Dashboard
           </Button>
           <Button onClick={() => setIsTaskModalOpen(true)}>

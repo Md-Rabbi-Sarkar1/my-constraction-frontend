@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { useGetProjects } from "@/hooks"; 
 import { useCreateDocument } from "@/hooks/documents.hook";
+import { toast } from "../ui/toast";
 
 interface CreateDocumentModalProps {
   isOpen: boolean;
@@ -70,7 +71,8 @@ export function CreateDocumentModal({ isOpen, onClose }: CreateDocumentModalProp
         form.reset();
         setFormError("");
         onClose();
-        alert("Document registry entry committed successfully!");
+        toast.add({ title: "Document registry entry committed successfully!"});
+        
       } catch (err: any) {
         setFormError(err?.message || "Failed to finalize document filing log.");
       }

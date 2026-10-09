@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { useGetProjects } from "@/hooks"; 
 import { useCreateExpense } from "@/hooks/expenses.hook";
+import { toast } from "../ui/toast";
 
 interface CreateExpenseModalProps {
   isOpen: boolean;
@@ -60,7 +61,8 @@ export function CreateExpenseModal({ isOpen, onClose }: CreateExpenseModalProps)
         await spawnExpense(result.data);
         form.reset();
         onClose();
-        alert("Expense record logged successfully!");
+        toast.add({ title: "Expense record logged successfully!"});
+        
       } catch (err: any) {
         setFormError(err?.message || "Failed to save expense log.");
       }

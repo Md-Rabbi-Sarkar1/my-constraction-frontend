@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { useGetProjects } from "@/hooks"; // 💡 Reuses your existing project list hook system
 import { useRecordTransaction } from "@/hooks/material.hook";
+import { toast } from "../ui/toast";
 
 interface RecordTransactionModalProps {
   isOpen: boolean;
@@ -59,7 +60,8 @@ export function RecordTransactionModal({ isOpen, onClose, materialId }: RecordTr
         await logTransaction(result.data);
         form.reset();
         onClose();
-        alert("Stock ledger transaction updated successfully!");
+        toast.add({ title: "Stock ledger transaction updated successfully!"});
+        
       } catch (err: any) {
         setFormError(err?.message || "Failed to commit record entry.");
       }

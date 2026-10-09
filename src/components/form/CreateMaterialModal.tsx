@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { useCreateMaterial } from "@/hooks/material.hook";
+import { toast } from "../ui/toast";
 // import { useCreateMaterial } from "@/hooks/useMaterials";
 
 interface CreateMaterialModalProps {
@@ -60,7 +61,8 @@ export function CreateMaterialModal({ isOpen, onClose }: CreateMaterialModalProp
         form.reset();
         setFormError("");
         onClose();
-        alert("Inventory material item added successfully!");
+        toast.add({ title: "Inventory material item added successfully!"});
+       
       } catch (err: any) {
         setFormError(err?.message || "Failed to commit inventory entry.");
       }

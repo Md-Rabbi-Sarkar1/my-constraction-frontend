@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { useInviteUser } from "@/hooks";
 import { InviteFormValues, inviteUserSchema } from "@/validation/user.validation";
+import { toast } from "../ui/toast";
 
 const ROLES = ["ADMIN", "PROJECT_MANAGER", "ENGINEER", "WORKER"] as const;
 
@@ -44,11 +45,13 @@ export function InviteUserForm({ onSuccess }: InviteUserFormProps) {
       // 2. Perform the async API dispatch directly here
       try {
         await sendInvite(result.data);
-        alert("User invitation sent successfully!");
+        toast.add({ title: "User invitation sent successfully!"});
+       
         form.reset();
         if (onSuccess) onSuccess();
       } catch (err) {
-        alert("Failed to send user invitation.");
+        toast.add({ title: "Failed to send user invitation."});
+        
       }
     },
   });

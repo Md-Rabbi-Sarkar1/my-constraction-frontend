@@ -5,6 +5,7 @@ import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { useGetProjectMembers } from "@/hooks";
 import { useCreateProjectTask } from "@/hooks/task.hook";
+import { toast } from "../ui/toast";
 
 
 interface CreateTaskModalProps {
@@ -61,7 +62,8 @@ export function CreateTaskModal({ isOpen, onClose, projectId }: CreateTaskModalP
         form.reset();
         setFormError("");
         onClose();
-        alert("Task created successfully!");
+        toast.add({ title: "Task created successfully!"});
+        
       } catch (err: any) {
         setFormError(err?.message || "Failed to finalize task creation.");
       }

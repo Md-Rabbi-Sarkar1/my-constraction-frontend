@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { useGetCompanyProfile, useUpdateCompanyProfile } from "@/hooks/company.hook";
+import { toast } from "@/components/ui/toast";
 
 // 💡 Zod schema ensuring text field validations are sound before submission
 const updateCompanySchema = z.object({
@@ -41,7 +42,8 @@ export default function CompanySettingsPage() {
       try {
         await saveProfile(result.data);
         setIsEditing(false);
-        alert("Company profile updated successfully!");
+        toast.add({ title: "Company profile updated successfully!"});
+        
       } catch (err: any) {
         setFormError(err?.message || "Failed to persist profile updates.");
       }

@@ -27,7 +27,7 @@ export default function ProjectIssuesPage() {
           <p className="text-sm text-muted-foreground">Monitor reported blockages, material faults, and resolving statuses.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push(`/projects/${projectId}`)}>
+          <Button variant="outline" onClick={() => router.push(`/user-dashboard/projects/${projectId}`)}>
             Back to Dashboard
           </Button>
           <Button onClick={() => setIsModalOpen(true)}>

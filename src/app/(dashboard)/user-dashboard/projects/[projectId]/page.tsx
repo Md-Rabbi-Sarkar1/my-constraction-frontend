@@ -11,9 +11,10 @@ import {
   useGetProjectMembers,
   // 👈 Loaded from your hooks file
 } from "@/hooks";
-import { ProjectMember } from "@/api";
+
 import { useGetProjectTasks } from "@/hooks/task.hook";
 import { useGetProjectIssues } from "@/hooks/issues.hook";
+import { ProjectMember } from "@/api/projects.api";
 
 type TaskStatus = "TODO" | "IN_PROGRESS" | "REVIEW" | "DONE";
 const STATUS_COLUMNS: TaskStatus[] = ["TODO", "IN_PROGRESS", "REVIEW", "DONE"];

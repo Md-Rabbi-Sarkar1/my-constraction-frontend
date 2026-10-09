@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { useGetProjects } from "@/hooks";
 import { useCreateDailyReport } from "@/hooks/report.hook";
+import { toast } from "../ui/toast";
 
 interface CreateDailyReportModalProps {
   isOpen: boolean;
@@ -112,7 +113,8 @@ export function CreateDailyReportModal({ isOpen, onClose }: CreateDailyReportMod
         setWorkersList([]);
         setFormError("");
         onClose();
-        alert("Daily Field Report logged successfully!");
+        toast.add({ title: "Daily Field Report logged successfully!"});
+       
       } catch (err: any) {
         setFormError(err?.message || "Failed to finalize field log entry.");
       }

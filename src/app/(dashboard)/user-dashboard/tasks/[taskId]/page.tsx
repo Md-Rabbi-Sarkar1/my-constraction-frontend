@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetTaskById, useUpdateTaskStatus, useDeleteTaskRecord } from "@/hooks/task.hook";
+import { toast } from "@/components/ui/toast";
 
 interface PageProps {
   params: Promise<{ projectId: string; taskId: string }>;
@@ -53,7 +54,8 @@ export default function TaskDetailsPage({ params }: PageProps) {
     try {
       await mutateStatus({ status: selectedStatus });
       setIsEditing(false);
-      alert("Pipeline milestone status modified successfully!");
+      toast.add({ title: "Pipeline milestone status modified successfully!"});
+     
     } catch (err) {
       console.error("Status migration rejected.");
     }
@@ -66,7 +68,8 @@ export default function TaskDetailsPage({ params }: PageProps) {
 
     try {
       await removeTask();
-      alert("Task record permanently removed.");
+      toast.add({ title: "Task record permanently removed."});
+     
       router.push(`/user-dashboard/projects/${projectId}`); // Safely routes back to dashboard board pipeline
     } catch (err) {
       console.error("Task destruction sequence dropped.");
@@ -86,7 +89,7 @@ export default function TaskDetailsPage({ params }: PageProps) {
         </div>
         <Button 
           variant="outline" 
-          onClick={() => router.push(`/user-dashboard/projects/${projectId}`)}
+          onClick={() => router.push(`/user-dashboard/tasks`)}
           className="h-9 text-xs font-medium border-slate-200 text-slate-700 hover:bg-slate-50"
         >
           ← Back to Project Board

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 
 // 💡 1. Zod Validation Schema for incoming customer inquiries
 const contactFormSchema = z.object({
@@ -43,7 +44,8 @@ export default function ContactPage() {
         
         console.log("Contact form payload committed successfully:", result.data);
         form.reset();
-        alert("Thank you! Your corporate consultation ticket has been logged successfully.");
+        toast.add({ title: "Thank you! Your corporate consultation ticket has been logged successfully."});
+        
       } catch (err: any) {
         setFormError(err?.message || "Failed to transmit message payload. Plz try again.");
       } finally {

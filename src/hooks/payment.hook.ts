@@ -5,6 +5,7 @@ import {
   initiateBkashPayment, 
   InitiateBkashPaymentPayload 
 } from "@/api/payment.api";
+import { toast } from "@/components/ui/toast";
 
 export function useInitiatePayment() {
   return useMutation<BkashPaymentResponse, any, InitiateBkashPaymentPayload>({
@@ -18,13 +19,14 @@ export function useInitiatePayment() {
         window.location.assign(redirectUrl);
       } else {
         console.error("Redirection path value missing from server response packet.");
-        alert("Payment initiated but redirection URL was not received cleanly.");
+        toast.add({ title: "Payment initiated but redirection URL was not received cleanly."});
+        
       }
     },
     onError: (err: any) => {
       // Safely access your Nest/Express server error messages
       const errorMsg = err?.data?.message || err?.message || "bKash handshake failed.";
-      alert(`${errorMsg} (Your company might already be marked as PAID).`);
+      toast.add({ title: "Your company might already be marked as PAID"});
     }
   });
 }

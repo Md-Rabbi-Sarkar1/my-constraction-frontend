@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { useGetIssueById, useUpdateIssueStatus, useDeleteIssueRecord } from "@/hooks/issues.hook";
+import { toast } from "@/components/ui/toast";
 
 interface PageProps {
   params: Promise<{ projectId: string; issueId: string }>;
@@ -47,9 +48,9 @@ export default function IssueDetailsPage({ params }: PageProps) {
     try {
       await updateStatus({ status: selectedStatus });
       setIsEditing(false);
-      alert("Incident resolution pipeline status modified successfully!");
+     toast.add({ title: "Incident resolution pipeline status modified successfully!" });
     } catch (err) {
-      alert("Failed to modify pipeline status parameters.");
+      toast.add({ title: "Failed to modify pipeline status parameters" });
     }
   };
 
@@ -62,10 +63,11 @@ export default function IssueDetailsPage({ params }: PageProps) {
     try {
       // 💡 Sends the verified issueId to delete unique records cleanly
       await removeIssue();
-      alert("Incident log successfully erased.");
+      toast.add({ title: "Incident log successfully erased."});
+      
       router.push(`/user-dashboard/projects/${projectId}`);
     } catch (err) {
-      alert("Failed to execute data destruction loop.");
+      toast.add({ title: "Failed to execute data destruction loop."});
     }
   };
 
@@ -82,7 +84,7 @@ export default function IssueDetailsPage({ params }: PageProps) {
         </div>
         <Button 
           variant="outline" 
-          onClick={() => router.push(`/user-dashboard/projects/${projectId}`)}
+          onClick={() => router.push(`/user-dashboard/issues`)}
           className="h-9 text-xs font-medium border-slate-200 text-slate-700 hover:bg-slate-50"
         >
           ← Back to Project Board

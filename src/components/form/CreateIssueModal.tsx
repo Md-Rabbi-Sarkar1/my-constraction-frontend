@@ -5,6 +5,7 @@ import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { useGetProjectMembers } from "@/hooks";
 import { useCreateProjectIssue } from "@/hooks/issues.hook";
+import { toast } from "../ui/toast";
 
 
 interface CreateIssueModalProps {
@@ -57,7 +58,8 @@ export function CreateIssueModal({ isOpen, onClose, projectId }: CreateIssueModa
         await spawnIssue(result.data);
         form.reset();
         onClose();
-        alert("Project log issue created successfully!");
+        toast.add({ title: "Project log issue created successfully!"});
+        
       } catch (err: any) {
         setFormError(err?.message || "Failed to commit issue registration.");
       }

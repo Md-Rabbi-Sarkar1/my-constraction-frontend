@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useVerifyInvite } from "@/hooks";
 import { AcceptInviteFormValues, acceptInviteSchema } from "@/validation/user.validation";
+import { toast } from "@/components/ui/toast";
 
 export default function AcceptInvitePage() {
   const searchParams = useSearchParams();
@@ -41,10 +42,12 @@ export default function AcceptInvitePage() {
 
       try {
         await verifyInvite(result.data);
-        alert("Account setup completed successfully!");
+        toast.add({ title: "Account setup completed successfully!"});
+        
         router.push("/login");
       } catch (err) {
-        alert("Failed to complete account setup.");
+        toast.add({ title:"Failed to complete account setup." });
+       
       }
     },
   });

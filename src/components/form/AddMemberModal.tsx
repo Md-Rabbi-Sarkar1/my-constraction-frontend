@@ -5,6 +5,7 @@ import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { useAddProjectMember, useGetAllUsers } from "@/hooks";
 import { UserItem } from "@/api";
+import { toast } from "../ui/toast";
 
 interface AddMemberModalProps {
   isOpen: boolean;
@@ -43,7 +44,8 @@ export function AddMemberModal({ isOpen, onClose, projectId, currentMembers = []
         form.reset();
         setFormError("");
         onClose();
-        alert("Member successfully added to project!");
+        toast.add({ title: "Member successfully added to project!"});
+        
       } catch (err: any) {
         setFormError(err?.message || "Failed to add member to project.");
       }
