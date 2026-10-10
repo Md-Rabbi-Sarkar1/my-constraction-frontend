@@ -24,37 +24,65 @@ export default function LoginForm() {
         ADMIN: {
             email: "admin@demo.local",
             password: "Password123!",
-            label: "Admin",
+            label: "Admin Bypass",
             icon: <ShieldCheck className="w-4 h-4 text-rose-600" />,
-            style: "hover:bg-rose-50/50 hover:border-rose-300 border-rose-100"
+            style: "hover:bg-rose-50/50 hover:border-rose-300"
         },
         PROJECT_MANAGER: {
             email: "mdkhias70@gmail.com",
             password: "Khias123#",
-            label: "Manager",
+            label: "Manager Bypass",
             icon: <Briefcase className="w-4 h-4 text-blue-600" />,
-            style: "hover:bg-blue-50/50 hover:border-blue-300 border-blue-100"
+            style: "hover:bg-blue-50/50 hover:border-blue-300"
         },
         ENGINEER: {
             email: "mdrabbisarkar70@gmail.com",
             password: "Raja123#",
-            label: "Engineer",
+            label: "Engineer Bypass",
             icon: <HardHat className="w-4 h-4 text-amber-600" />,
-            style: "hover:bg-amber-50/50 hover:border-amber-300 border-amber-100"
+            style: "hover:bg-amber-50/50 hover:border-amber-300"
         },
         WORKER: {
             email: "mdrabbisarkar72@gmail.com",
             password: "Rabbi123#",
-            label: "Worker",
+            label: "Worker Bypass",
             icon: <User className="w-4 h-4 text-emerald-600" />,
-            style: "hover:bg-emerald-50/50 hover:border-emerald-300 border-emerald-100"
+            style: "hover:bg-emerald-50/50 hover:border-emerald-300"
         }
+    };
+
+    // 💡 2. Automated Core Shared Trigger Executing Quick Logins
+    const triggerQuickLogin = (roleKey: keyof typeof roleBypassConfig) => {
+        const targetCredentials = roleBypassConfig[roleKey];
+        
+        // Populate the input states for visibility, then dispatch mutation payload
+        form.setFieldValue("email", targetCredentials.email);
+        form.setFieldValue("password", targetCredentials.password);
+
+        login({
+            email: targetCredentials.email,
+            password: targetCredentials.password
+        }, {
+            onSuccess: () => {
+                toast.add({
+                    title: "Login Success",
+                    description: `Logged in quickly as ${roleKey.replace(/_/g, ' ')}`,
+                })
+                router.push('/user-dashboard/dashboard')
+            },
+            onError: (err) => {
+                toast.add({
+                    title: "Login Fail",
+                    description: (err as any)?.data?.message || "Bypass request rejected."
+                })
+            }
+        });
     };
 
     const form = useForm({
         defaultValues: {
-            email: "",
-            password: ""
+            email: "admin@demo.local",
+            password: "Password123!"
         },
         validators: {
             onSubmit: loginSchema
@@ -64,49 +92,23 @@ export default function LoginForm() {
                 email: value.email,
                 password: value.password
             };
-            executeLogin(loginData, "Email Login");
+            login(loginData, {
+                onSuccess: () => {
+                    toast.add({
+                        title: "Login Success",
+                        description: "Welcome",
+                    })
+                    router.push('/user-dashboard/dashboard')
+                },
+                onError: (err) => {
+                    toast.add({
+                        title: "Login Fail",
+                        description: (err as any)?.data?.message || "Something wrong, Plz try again"
+                    })
+                }
+            })
         }
     })
-
-    // 💡 রিইউজেবল এবং ক্লিন লগইন এক্সিকিউটর ফাংশন
-    const executeLogin = (credentials: typeof form.state.values, roleLabel: string) => {
-        login(credentials, {
-            onSuccess: () => {
-                toast.add({
-                    title: "Login Success",
-                    description: `Welcome! Logged in as ${roleLabel}`,
-                })
-                router.push('/user-dashboard/dashboard')
-            },
-            onError: (err) => {
-                toast.add({
-                    title: "Login Fail",
-                    description: (err as any)?.data?.message || "Something went wrong, please try again."
-                })
-            }
-        });
-    };
-
-    // 💡 2. Automated Core Shared Trigger Executing Quick Logins
-      // 💡 2. Automated Core Shared Trigger Executing Quick Logins
-    const triggerQuickLogin = (roleKey: keyof typeof roleBypassConfig) => {
-        const targetCredentials = roleBypassConfig[roleKey];
-        
-        // ১. ফর্মের ফিল্ডগুলোতে ভ্যালু সেট করা
-        form.setFieldValue("email", targetCredentials.email);
-        form.setFieldValue("password", targetCredentials.password);
-
-        // ২. ফিল্ডগুলোর মেটা স্টেট আপডেট করে 'isTouched' ট্রু (true) করা
-        form.setFieldMeta("email", (prev) => ({ ...prev, isTouched: true }));
-        form.setFieldMeta("password", (prev) => ({ ...prev, isTouched: true }));
-
-        // ৩. সরাসরি রিকোয়েস্ট ফায়ার করা
-        executeLogin({
-            email: targetCredentials.email,
-            password: targetCredentials.password
-        }, targetCredentials.label);
-    };
-
 
     return (
         <div className="flex flex-col gap-5">
@@ -164,8 +166,8 @@ export default function LoginForm() {
                                             value={field.state.value}
                                             aria-invalid={isInvalid}
                                         />
-                                        <button className='absolute right-3 top-2' type="button" onClick={() => setShowPassword((pre) => !pre)}>
-                                            {showPassword ? <Eye className="w-4 h-4" /> : <EyeClosed className="w-4 h-4" />}
+                                        <button className='absolute right-3 top-1' type="button" onClick={() => setShowPassword((pre) => !pre)}>
+                                            {showPassword ? <Eye /> : <EyeClosed />}
                                         </button>
                                     </div>
                                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -174,7 +176,7 @@ export default function LoginForm() {
                         }}
                     </form.Field>
                     
-                    <Button disabled={loginPending} type='submit' className="w-full">
+                    <Button disabled={loginPending} type='submit'>
                         {loginPending ? <><Spinner />Submitting</> : <>Submit</>}
                     </Button>
                 </FieldGroup>
@@ -185,28 +187,41 @@ export default function LoginForm() {
             <GoogleLoginComponent />
 
             {/* 💡 3. ONE-CLICK MULTI-ROLE QUICK ACCESS OVERLAY MODULE */}
-            <div className="space-y-3 pt-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block text-center">
-                    Quick Dev Bypass Access
+            <div className="space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-center">
+                    Quick Developer Access Profile Login
                 </span>
                 <div className="grid grid-cols-2 gap-2">
                     {(Object.keys(roleBypassConfig) as Array<keyof typeof roleBypassConfig>).map((roleKey) => {
-                        const config = roleBypassConfig[roleKey];
+                        const target = roleBypassConfig[roleKey];
                         return (
                             <button
                                 key={roleKey}
                                 type="button"
                                 disabled={loginPending}
                                 onClick={() => triggerQuickLogin(roleKey)}
-                                className={`flex items-center gap-2 p-2.5 text-xs font-medium border rounded-md transition-all duration-200 bg-card text-foreground disabled:opacity-50 disabled:pointer-events-none ${config.style}`}
+                                className={`flex items-center gap-2 border rounded-lg px-3 py-2 bg-white text-left font-medium text-xs transition shadow-sm disabled:opacity-50 text-slate-800 border-slate-200/80 ${target.style}`}
                             >
-                                {config.icon}
-                                <span className="truncate">{config.label}</span>
+                                {target.icon}
+                                <div className="truncate">
+                                    <p className="font-bold leading-none">{target.label}</p>
+                                    <p className="text-[10px] text-slate-400 truncate mt-0.5">{target.email}</p>
+                                </div>
                             </button>
                         );
                     })}
                 </div>
             </div>
+
+            <div className="text-center text-sm text-muted-foreground mt-1">
+                Don&apos;t have an account?{" "}
+                <Link
+                  href="/register"
+                  className="font-medium underline underline-offset-4 hover:text-primary"
+                >
+                  Register
+                </Link>
+            </div>
         </div>
-    );
+    )
 }
