@@ -1,5 +1,7 @@
 import { getMe, googleOAuth, userLogin, userLogout, userRegistration, verifyAccount } from "@/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+
 
 export function useRegistration() {
   return useMutation({
@@ -17,8 +19,18 @@ export function useLogin() {
     })
 }
 export function useLogout() {
+    const queryClient = useQueryClient();
+    const router = useRouter();
     return useMutation({
-        mutationFn:userLogout
+        mutationFn:userLogout,
+         onSuccess: () => {
+           
+            queryClient.clear(); 
+
+            
+            router.push('/login');
+            router.refresh(); 
+        }
     })
 }
 
