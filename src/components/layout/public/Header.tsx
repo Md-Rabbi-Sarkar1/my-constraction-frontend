@@ -56,7 +56,7 @@ export default function Header() {
           Login
           </Button>)}
           {!isLoading && data &&(<Button
-            variant="destructive"
+            className="bg-amber-500 text-black"
             onClick={handleLogout}
           >
             Logout

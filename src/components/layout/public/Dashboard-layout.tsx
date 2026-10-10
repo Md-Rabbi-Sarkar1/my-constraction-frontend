@@ -97,7 +97,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         }`}
       >
         <div className="flex h-16 items-center border-b border-slate-800 px-6">
-          <Link href="/dashboard" className="text-lg font-semibold text-white">
+          <Link href="/" className="text-lg font-semibold text-white">
             Construction Ops
           </Link>
         </div>

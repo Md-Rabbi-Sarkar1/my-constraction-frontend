@@ -109,7 +109,7 @@ const handlePaymentInitiation = async (tier: any) => {
                   type="button"
                   disabled={paymentPending}
                   onClick={() => handlePaymentInitiation(tier)}
-                  className="w-full text-xs font-bold h-10 bg-slate-900 text-white hover:bg-slate-800"
+                  className="w-full text-xs font-bold h-10 bg-amber-500 text-black hover:bg-slate-800"
                 >
                   {isThisTierLoading ? (
                     <div className="flex items-center gap-1.5 justify-center">
