@@ -27,7 +27,7 @@ export default function SimpleHeroWithImage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Link href="http://localhost:3000/login"><Button  size="lg" className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-medium px-6 h-12 shadow-sm">
+            <Link href="https://my-constraction-frontend.vercel.app/login"><Button  size="lg" className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-medium px-6 h-12 shadow-sm">
               Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </Button></Link>
             <Button size="lg" variant="outline" className="h-12 px-6">
