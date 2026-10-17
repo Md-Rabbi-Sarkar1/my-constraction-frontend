@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
+        source: "/backend-api/:path*",
         destination: `${process.env.BACKEND_API_URL ?? "http://localhost:5000/api"}/:path*`,
       },
     ];
