@@ -68,14 +68,14 @@ const handlePaymentInitiation = async (tier: any) => {
 };
 
   return (
-    <div className="bg-slate-50 min-h-screen text-slate-900 antialiased">
-      <div className="bg-white border-b border-slate-200 py-16 px-4 text-center space-y-4">
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-950">Subscription Options Built for Construction Scale</h1>
+    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+      <div className="space-y-4 border-b border-slate-200 bg-white px-4 py-16 text-center dark:border-slate-800 dark:bg-slate-900">
+        <h1 className="text-3xl font-black text-slate-950 dark:text-white sm:text-4xl">Subscription Options Built for Construction Scale</h1>
         <p className="text-sm text-slate-500 max-w-xl mx-auto">Choose the operational capacity tier that fits your firm's workforce sizing constraints.</p>
         <div className="pt-4 flex justify-center">
-          <div className="bg-slate-100 p-1 rounded-xl border flex gap-1 text-xs font-bold text-slate-700">
-            <button type="button" disabled={paymentPending} onClick={() => setBillingPeriod("monthly")} className={`px-4 py-2 rounded-lg ${billingPeriod === "monthly" ? "bg-white text-slate-950 shadow-sm" : ""}`}>Monthly Billing</button>
-            <button type="button" disabled={paymentPending} onClick={() => setBillingPeriod("annually")} className={`px-4 py-2 rounded-lg ${billingPeriod === "annually" ? "bg-white text-slate-950 shadow-sm" : ""}`}>Annual Billing</button>
+          <div className="flex gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            <button type="button" disabled={paymentPending} onClick={() => setBillingPeriod("monthly")} className={`rounded-lg px-4 py-2 transition-colors ${billingPeriod === "monthly" ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-slate-200 dark:hover:bg-slate-700"}`}>Monthly Billing</button>
+            <button type="button" disabled={paymentPending} onClick={() => setBillingPeriod("annually")} className={`rounded-lg px-4 py-2 transition-colors ${billingPeriod === "annually" ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-slate-200 dark:hover:bg-slate-700"}`}>Annual Billing</button>
           </div>
         </div>
       </div>
@@ -86,9 +86,9 @@ const handlePaymentInitiation = async (tier: any) => {
           const isThisTierLoading = paymentPending && activeCheckingOutTier === tier.slug;
 
           return (
-            <div key={tier.name} className={`bg-white border rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-6 ${tier.accentColor}`}>
+            <div key={tier.name} className={`flex flex-col justify-between space-y-6 rounded-2xl border bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 ${tier.accentColor}`}>
               <div className="space-y-4">
-                <h3 className="text-lg font-black text-slate-950">{tier.name}</h3>
+                <h3 className="text-lg font-black text-slate-950 dark:text-white">{tier.name}</h3>
                 <p className="text-xs text-slate-500 min-h-[48px]">{tier.description}</p>
                 <div className="pt-2 border-b pb-4">
                   <span className="text-4xl font-mono font-black text-slate-950">৳{displayPrice}</span>

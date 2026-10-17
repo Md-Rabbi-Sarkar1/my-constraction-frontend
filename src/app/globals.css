@@ -49,6 +49,7 @@
 }
 
 :root {
+  color-scheme: light;
   --background: oklch(0.985 0.006 95);
   --foreground: oklch(0.22 0.025 250);
   --card: oklch(1 0 0);
@@ -84,6 +85,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -115,6 +117,47 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Keep older page-level utility classes readable when dark mode is enabled. */
+.dark body {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.dark .bg-white,
+.dark .bg-card {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-50\/50,
+.dark .bg-\[\#f7f8fa\] {
+  background-color: #0f172a !important;
+}
+
+.dark .text-slate-950,
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-muted-foreground {
+  color: #cbd5e1 !important;
+}
+
+.dark .border-slate-200,
+.dark .border-slate-100 {
+  border-color: #334155 !important;
+}
+
+.dark [data-slot="button"].bg-white,
+.dark button.bg-white {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
 }
 
 @layer base {

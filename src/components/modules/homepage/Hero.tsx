@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function SimpleHeroWithImage() {
   return (
-    <section className="relative overflow-hidden border-b bg-[#f7f8fa] py-16 text-foreground md:py-24">
+    <section className="relative overflow-hidden border-b bg-[#f7f8fa] py-16 text-foreground dark:bg-slate-950 md:py-24">
       <div className="pointer-events-none absolute -right-32 -top-40 h-96 w-96 rounded-full bg-amber-200/40 blur-3xl" />
       <div className="container mx-auto px-4 max-w-6xl grid gap-12 md:grid-cols-2 items-center">
         
