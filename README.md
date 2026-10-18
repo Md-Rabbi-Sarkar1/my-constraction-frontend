@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Construction Management System (CMS) - Frontend Dashboard
 
-## Getting Started
+This repository houses the client-side user interface for the Construction Management System. It delivers real-time project tracking, inventory dashboards, and dynamic log reporting for field workers and project managers.
 
-First, run the development server:
+## 🛠️ Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+* **Framework:** React.js with Vite
+* **Styling & UI Components:** Tailwind CSS & Shadcn UI
+* **State Management & Data Fetching:** TanStack Query (React Query) & Zustand
+* **Routing:** React Router DOM
+* **Form Handling & Validation:** React Hook Form & Zod
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📂 Core Frontend Features & Views
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The frontend applies strict **Role-Based Access Control (RBAC)** to match backend permissions, dynamically rendering UI elements based on the authenticated user's role (Admin, Project Manager, or Field Contractor).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🔑 Authentication & Portal Access
+* **Login / Registration Screens:** Standard secure authentication forms utilizing session persistence via JWT tokens.
+* **Protected Routes:** Route guards preventing unauthorized clients from viewing restricted administrative panels.
 
-## Learn More
+### 📊 Dashboards & Analytics
+* **Manager Terminal:** High-level project metrics including budget burn rates, overall material status, and construction milestones.
+* **Contractor Mobile Feed:** A streamlined, mobile-responsive view optimized for field workers to log updates quickly.
 
-To learn more about Next.js, take a look at the following resources:
+### 🏗️ Projects & Milestones View
+* **Milestone Timeline:** An interactive timeline tracking active building phases and upcoming operational goals.
+* **Project Manager Control Board:** Form elements allowing managers to append new project phases directly to the system.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 📦 Materials & Site Inventory
+* **Inventory Tracker:** A comprehensive database grid showing global counts of raw materials.
+* **Deduction Interface:** A simple interactive prompt enabling field supervisors to log daily raw material usages.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 📝 Daily Work Logs
+* **Daily Report Wizard:** A comprehensive, multi-step digital submission form used by contractors to log site documentation.
 
-## Deploy on Vercel
+## ⚙️ Getting Started
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Prerequisites
+* Node.js installed locally (v18+ recommended).
+* The CMS Backend API running locally or hosted externally.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Installation & Run
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install client dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Configure your Environment Variables:
+   Create a `.env.local` file in the root of this folder:
+   ```env
+   VITE_API_BASE_URL=http://localhost:5000/api/v1
+   ```
+
+4. Spin up the local development server:
+   ```bash
+   npm run dev
+   ```
+
+The frontend application will initialize at [http://localhost:5173](http://localhost:5173).
